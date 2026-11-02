@@ -1,113 +1,555 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organic Farmer Directory</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- Yahan farmers.js file ko link kiya gaya hai -->
-    <script src="farmers.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>जैविक खेती संवर्धन पोर्टल | मन्दसौर</title>
+  <!-- Tailwind CSS CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <!-- Alpine.js CDN -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- External Farmers JS -->
+  <script src="farmers.js"></script>
+  <style>
+    :root {
+      --primary: #2d6a4f;
+      --primary-dark: #1b4332;
+      --accent: #52b788;
+      --light-bg: #f8fbf8;
+      --text-dark: #212529;
+      --text-muted: #555;
+      --white: #ffffff;
+      --border: #d8f3dc;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--light-bg);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    /* Header & Navigation */
+    header {
+      background-color: var(--white);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .logo-text h1 {
+      font-size: 1.3rem;
+      color: var(--primary-dark);
+    }
+
+    .logo-text span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 20px;
+      align-items: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+    /* Main Carousel */
+    .carousel-container {
+      position: relative;
+      max-width: 100%;
+      height: 480px;
+      overflow: hidden;
+      background-color: #000;
+    }
+
+    .carousel-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+    }
+
+    .carousel-slide.active {
+      opacity: 1;
+    }
+
+    .carousel-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.65);
+    }
+
+    .carousel-caption {
+      position: absolute;
+      bottom: 20%;
+      left: 10%;
+      color: var(--white);
+      max-width: 600px;
+      text-shadow: 1px 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .carousel-caption h2 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.4);
+      color: white;
+      border: none;
+      padding: 14px 18px;
+      cursor: pointer;
+      font-size: 20px;
+      border-radius: 4px;
+      user-select: none;
+    }
+
+    .carousel-btn:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .prev { left: 20px; }
+    .next { right: 20px; }
+
+    /* Layout Sections */
+    .container {
+      max-width: 1200px;
+      margin: 50px auto;
+      padding: 0 20px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .section-title {
+      color: var(--primary-dark);
+      font-size: 1.8rem;
+    }
+
+    /* 2-Grid Section (About & Contact) */
+    .info-section-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 60px;
+    }
+
+    .card-box {
+      background: var(--white);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      border-left: 5px solid var(--primary);
+    }
+
+    .card-box h3 {
+      color: var(--primary-dark);
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-group input, 
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--primary-dark);
+      color: white;
+      text-align: center;
+      padding: 25px 20px;
+      margin-top: 60px;
+    }
+
+    @media (max-width: 900px) {
+      .info-section-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-container {
+        flex-direction: column;
+        gap: 15px;
+      }
+      nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+      .carousel-container {
+        height: 350px;
+      }
+      .carousel-caption h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800" x-data="organicApp()">
+<body x-data="organicApp()">
 
-    <header class="bg-white shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-green-700">🌱 Organic Farmer Connect</h1>
-                <p class="text-sm text-gray-600">Directly connect with local organic farmers for healthy, chemical-free produce.</p>
-            </div>
-            <div class="flex items-center gap-2 w-full md:w-auto">
-                <label for="tehsilFilter" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter Tehsil:</label>
-                <select id="tehsilFilter" x-model="selectedTehsil" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white">
-                    <option value="">All Tehsils</option>
-                    <template x-for="tehsil in uniqueTehsils" :key="tehsil">
-                        <option :value="tehsil" x-text="tehsil"></option>
-                    </template>
-                </select>
-            </div>
+  <!-- 1. Header & Navigation -->
+  <header>
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo-icon">🌱</div>
+        <div class="logo-text">
+          <h1>जैविक मन्दसौर</h1>
+          <span>प्राकृतिक कृषि अभियान</span>
         </div>
-    </header>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#home">HOME</a></li>
+          <li><a href="#about-section">SERVICES</a></li>
+          <li><a href="#contact-section">CONTACT</a></li>
+          <li><a href="#farmers-section">FARMERS</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-    <main class="max-w-7xl mx-auto px-4 my-8">
-        <h2 class="text-xl font-semibold mb-4 text-gray-800">Available Farmers (<span x-text="filteredFarmers.length"></span>)</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <template x-for="farmer in filteredFarmers" :key="farmer.sr_no">
-                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col justify-between">
-                    <div>
-                        <div class="h-48 overflow-hidden relative bg-gray-200">
-                            <img :src="farmer.farm_image" alt="Farm photo" class="w-full h-full object-cover">
-                            <span class="absolute top-3 right-3 bg-green-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow" x-text="farmer.tehsil"></span>
-                        </div>
-                        <div class="p-5">
-                            <h3 class="text-lg font-bold text-gray-900 mb-1" x-text="farmer.name"></h3>
-                            <p class="text-xs text-gray-500 mb-3">📍 Village: <span x-text="farmer.village"></span> | District: <span x-text="farmer.district"></span></p>
-                            <div class="bg-green-50 p-2.5 rounded-lg border border-green-100 text-sm mb-3">
-                                <p class="text-xs font-semibold text-green-800 uppercase">Current Produce:</p>
-                                <p class="text-gray-700 font-medium" x-text="farmer.current_produce"></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-5 pt-0 flex gap-2">
-                        <button @click="openDetailModal(farmer)" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg text-sm transition">View Details</button>
-                        <button @click="openBuyModal(farmer)" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg text-sm transition text-center">Buy / Visit</button>
-                    </div>
-                </div>
-            </template>
-        </div>
-    </main>
-
-    <!-- Modal -->
-    <div x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" style="display: none;">
-        <div @click.away="closeModal()" class="bg-white rounded-2xl max-w-lg w-full p-6 relative">
-            <button @click="closeModal()" class="absolute top-4 right-4 text-gray-400 font-bold">✕</button>
-            <div x-show="modalType === 'detail'">
-                <h3 class="text-xl font-bold mb-4" x-text="activeFarmer.name"></h3>
-                <div class="grid grid-cols-2 gap-2 mb-4">
-                    <img :src="activeFarmer.farm_image" alt="Farm Photo" class="rounded-lg object-cover h-32 w-full">
-                    <img :src="activeFarmer.produce_image" alt="Produce Photo" class="rounded-lg object-cover h-32 w-full">
-                </div>
-                <p class="text-sm mb-2"><strong>Village:</strong> <span x-text="activeFarmer.village"></span></p>
-                <p class="text-sm mb-2"><strong>Current Produce:</strong> <span x-text="activeFarmer.current_produce"></span></p>
-                <p class="text-sm mb-4"><strong>Upcoming Produce:</strong> <span x-text="activeFarmer.upcoming_produce"></span></p>
-                <button @click="modalType = 'buy'" class="w-full bg-green-600 text-white py-2 rounded-lg text-sm">Proceed to Buy / Inquire</button>
-            </div>
-            <div x-show="modalType === 'buy'">
-                <h3 class="text-xl font-bold mb-2">Connect with <span x-text="activeFarmer.name"></span></h3>
-                <form @submit.prevent="submitOrder" class="space-y-3">
-                    <input type="text" x-model="buyer.name" placeholder="Your Name" required class="w-full border p-2 rounded text-sm">
-                    <input type="tel" x-model="buyer.mobile" placeholder="Mobile Number" required class="w-full border p-2 rounded text-sm">
-                    <textarea x-model="buyer.need" placeholder="Organic Need" required class="w-full border p-2 rounded text-sm"></textarea>
-                    <input type="text" x-model="buyer.amount" placeholder="Amount (₹)" required class="w-full border p-2 rounded text-sm">
-                    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded text-sm">Open WhatsApp 🚀</button>
-                </form>
-            </div>
-        </div>
+  <!-- 2. Main Page Carousel -->
+  <section id="home" class="carousel-container">
+    <div class="carousel-slide active">
+      <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1400&q=80" alt="हरित खेत">
+      <div class="carousel-caption">
+        <h2>शुद्ध मिट्टी, समृद्ध किसान</h2>
+        <p>रासायनिक मुक्त खेती अपनाकर भूमि की उर्वरक क्षमता बढ़ाएं।</p>
+      </div>
+    </div>
+    <div class="carousel-slide">
+      <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=1400&q=80" alt="जीवामृत व खाद">
+      <div class="carousel-caption">
+        <h2>जीवामृत एवं वर्मी कम्पोस्ट</h2>
+        <p>प्राकृतिक अवयवों से फसल को पोषण और रोगों से सुरक्षा प्रदान करें।</p>
+      </div>
+    </div>
+    <div class="carousel-slide">
+      <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=1400&q=80" alt="फसल उत्पादन">
+      <div class="carousel-caption">
+        <h2>गुणवत्तापूर्ण उपज, बेहतर मूल्य</h2>
+        <p>मन्दसौर की पहचान: औषधीय व मसाला फसलों का प्राकृतिक उत्पादन।</p>
+      </div>
+    </div>
+    <div class="carousel-slide">
+      <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1400&q=80" alt="जैविक उत्पाद">
+      <div class="carousel-caption">
+        <h2>ताजा जैविक उत्पाद</h2>
+        <p>सीधे खेत से उपभोक्ता तक कीटनाशक मुक्त पौष्टिक आहार।</p>
+      </div>
+    </div>
+    <div class="carousel-slide">
+      <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?auto=format&fit=crop&w=1400&q=80" alt="किसान समूह">
+      <div class="carousel-caption">
+        <h2>सामूहिक प्रयास, आत्मनिर्भर गाँव</h2>
+        <p>जिले के प्रगतिशील कृषकों के अनुभवों से सीखें और आगे बढ़ें।</p>
+      </div>
     </div>
 
-    <script>
-        function organicApp() {
-            return {
-                selectedTehsil: '',
-                showModal: false,
-                modalType: 'detail',
-                activeFarmer: {},
-                buyer: { name: '', mobile: '', need: '', amount: '' },
-                // Yahan farmers.js wali file ka data seedhe utha liya jayega
-                farmers: typeof farmersData !== 'undefined' ? farmersData : [],
-                get uniqueTehsils() { return [...new Set(this.farmers.map(f => f.tehsil))]; },
-                get filteredFarmers() { return this.selectedTehsil ? this.farmers.filter(f => f.tehsil === this.selectedTehsil) : this.farmers; },
-                openDetailModal(farmer) { this.activeFarmer = farmer; this.modalType = 'detail'; this.showModal = true; },
-                openBuyModal(farmer) { this.activeFarmer = farmer; this.modalType = 'buy'; this.showModal = true; },
-                closeModal() { this.showModal = false; this.buyer = { name: '', mobile: '', need: '', amount: '' }; },
-                submitOrder() {
-                    let msg = `Hello ${this.activeFarmer.name},%0A%0A*Buyer Name:* ${this.buyer.name}%0A*Mobile:* ${this.buyer.mobile}%0A*Requirement:* ${this.buyer.need}%0A*Amount:* ₹${this.buyer.amount}`;
-                    window.open(`https://wa.me/91${this.activeFarmer.mobile}?text=${msg}`, '_blank');
-                    this.closeModal();
-                }
-            }
+    <button class="carousel-btn prev" onclick="changeSlide(-1)">&#10094;</button>
+    <button class="carousel-btn next" onclick="changeSlide(1)">&#10095;</button>
+  </section>
+
+  <!-- Main Container -->
+  <main class="container">
+    
+    <!-- 3. Farmers Grid Section with Tehsil Filter -->
+    <section id="farmers-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">पंजीकृत जैविक किसान (<span x-text="filteredFarmers.length"></span>)</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">जिले में प्राकृतिक व जैविक पद्धति से जुड़े सक्रिय किसान</p>
+        </div>
+        <!-- तहसील फ़िल्टर -->
+        <div class="flex items-center gap-2">
+          <label for="tehsilFilter" class="text-sm font-medium text-gray-700 whitespace-nowrap">तहसील चुनें:</label>
+          <select id="tehsilFilter" x-model="selectedTehsil" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white">
+            <option value="">सभी तहसील (All Tehsils)</option>
+            <template x-for="tehsil in uniqueTehsils" :key="tehsil">
+              <option :value="tehsil" x-text="tehsil"></option>
+            </template>
+          </select>
+        </div>
+      </div>
+
+      <!-- Farmers Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <template x-for="farmer in filteredFarmers" :key="farmer.sr_no">
+          <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col justify-between">
+            <div>
+              <div class="h-48 overflow-hidden relative bg-gray-200">
+                <img :src="farmer.gallery && farmer.gallery.length > 0 ? farmer.gallery[0].url : ''" alt="Farm photo" class="w-full h-full object-cover">
+                <span class="absolute top-3 right-3 bg-green-700 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow" x-text="farmer.tehsil"></span>
+              </div>
+              <div class="p-5">
+                <h3 class="text-lg font-bold text-gray-900 mb-1" x-text="farmer.name"></h3>
+                <p class="text-xs text-gray-500 mb-3">📍 गाँव: <span x-text="farmer.village"></span> | जिला: <span x-text="farmer.district"></span></p>
+                <div class="bg-green-50 p-2.5 rounded-lg border border-green-100 text-sm mb-3">
+                  <p class="text-xs font-semibold text-green-800 uppercase">वर्तमान उपज:</p>
+                  <p class="text-gray-700 font-medium" x-text="farmer.current_produce"></p>
+                </div>
+              </div>
+            </div>
+            <div class="p-5 pt-0 flex gap-2">
+              <button @click="openDetailModal(farmer)" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg text-sm transition">विवरण देखें</button>
+              <button @click="openBuyModal(farmer)" class="flex-1 bg-green-700 hover:bg-green-800 text-white font-medium py-2 px-4 rounded-lg text-sm transition text-center">खरीदें / संपर्क</button>
+            </div>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <!-- 4. About & Contact Section -->
+    <section class="info-section-grid">
+      <div class="card-box" id="about-section">
+        <h3>पोर्टल के बारे में</h3>
+        <p style="margin-bottom: 12px;">
+          यह वेब पोर्टल मन्दसौर जिले के कृषकों को पारंपरिक और रसायन-मुक्त खेती की ओर अग्रसर करने के लिए विकसित किया गया है।
+        </p>
+        <p style="margin-bottom: 10px;"><strong>मुख्य उद्देश्य एवं सेवाएं:</strong></p>
+        <ul style="padding-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li>जीवामृत, बीजामृत व प्राकृतिक कीटनाशक निर्माण की विधियाँ।</li>
+          <li>जैविक प्रमाणित फसलों के लिए सीधा बाजार मंच।</li>
+          <li>मृदा स्वास्थ्य संवर्धन व शासकीय अनुदान योजनाओं का लाभ।</li>
+          <li>जिले के कृषकों के बीच अनुभव व तकनीकी परामर्श का आदान-प्रदान।</li>
+        </ul>
+      </div>
+
+      <div class="card-box" id="contact-section">
+        <h3>संपर्क एवं सहायता केंद्र</h3>
+        <form class="contact-form" @submit.prevent="handleContact">
+          <div class="form-group">
+            <input type="text" placeholder="आपका पूरा नाम" required>
+          </div>
+          <div class="form-group">
+            <input type="tel" placeholder="मोबाइल नंबर" required>
+          </div>
+          <div class="form-group">
+            <textarea rows="4" placeholder="अपनी समस्या, सुझाव या संदेश यहाँ लिखें..." required></textarea>
+          </div>
+          <button type="submit" class="btn-primary" style="background-color: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">संदेश भेजें</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Larger Modal Component (Detail with Interactive Carousel & WhatsApp Form) -->
+  <div x-show="showModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 overflow-y-auto" style="display: none;">
+    <div @click.away="closeModal()" class="bg-white rounded-2xl max-w-3xl w-full p-6 md:p-8 relative shadow-2xl my-8 max-h-[90vh] overflow-y-auto">
+      <button @click="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 font-bold text-2xl z-20">✕</button>
+      
+      <!-- Detail View with Farmer Image Carousel -->
+      <div x-show="modalType === 'detail'">
+        <h3 class="text-2xl font-bold mb-2 text-green-900" x-text="activeFarmer.name"></h3>
+        <p class="text-sm text-gray-600 mb-4">📍 गाँव: <span x-text="activeFarmer.village"></span>, तहसील: <span x-text="activeFarmer.tehsil"></span>, जिला: <span x-text="activeFarmer.district"></span></p>
+        
+        <!-- Farmer Detail Photo Carousel -->
+        <div class="mb-6">
+          <h4 class="text-sm font-semibold text-green-800 uppercase mb-2">📸 खेत एवं उत्पादन गैलरी (फार्म विज़िट व फ़सलें):</h4>
+          <div class="relative bg-black rounded-xl overflow-hidden h-64 md:h-80 shadow-inner">
+            <template x-for="(photo, index) in activeFarmer.gallery" :key="index">
+              <div x-show="activeGalleryIndex === index" class="absolute inset-0 transition-opacity duration-500 flex flex-col justify-end">
+                <img :src="photo.url" alt="Farmer Gallery Photo" class="w-full h-full object-cover">
+                <!-- Caption Overlay -->
+                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black via-black/60 to-transparent p-4 text-center">
+                  <span class="text-white text-sm font-bold tracking-wide" x-text="photo.caption"></span>
+                  <div class="text-xs text-gray-300 mt-0.5" x-text="(index + 1) + ' / ' + activeFarmer.gallery.length"></div>
+                </div>
+              </div>
+            </template>
+
+            <!-- Carousel Navigation Arrows -->
+            <button @click="prevPhoto()" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-80 text-white p-2.5 rounded-full text-lg transition z-10">&#10094;</button>
+            <button @click="nextPhoto()" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-80 text-white p-2.5 rounded-full text-lg transition z-10">&#10095;</button>
+          </div>
+        </div>
+
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6 space-y-2 text-sm">
+          <p><strong>भूमि विवरण:</strong> <span x-text="activeFarmer.land_details"></span></p>
+          <p><strong>जैविक अनुभव:</strong> <span x-text="activeFarmer.experience"></span></p>
+          <p><strong>वर्तमान उपज:</strong> <span x-text="activeFarmer.current_produce"></span></p>
+          <p><strong>आगामी उपज:</strong> <span x-text="activeFarmer.upcoming_produce"></span></p>
+        </div>
+
+        <button @click="modalType = 'buy'" class="w-full bg-green-700 hover:bg-green-800 text-white py-3 rounded-lg text-base font-semibold transition shadow">खरीदें / पूछताछ (Enquiry) करें 🚀</button>
+      </div>
+
+      <!-- Buy / WhatsApp Enquiry Form View -->
+      <div x-show="modalType === 'buy'">
+        <h3 class="text-xl font-bold mb-2 text-green-900">किसान <span x-text="activeFarmer.name"></span> से संपर्क करें</h3>
+        <p class="text-xs text-gray-500 mb-4">फॉर्म भरने के बाद सीधे व्हाट्सएप पर मैसेज खुलेगा।</p>
+        <form @submit.prevent="submitOrder" class="space-y-3">
+          <input type="text" x-model="buyer.name" placeholder="आपका नाम" required class="w-full border p-3 rounded-lg text-sm">
+          <input type="tel" x-model="buyer.mobile" placeholder="आपका मोबाइल नंबर" required class="w-full border p-3 rounded-lg text-sm">
+          <textarea x-model="buyer.need" placeholder="आवश्यकता (जैसे: 5 क्विंटल जैविक गेहूं चाहिए)" required class="w-full border p-3 rounded-lg text-sm h-28"></textarea>
+          <input type="text" x-model="buyer.amount" placeholder="कुल राशि अनुमानित (₹)" required class="w-full border p-3 rounded-lg text-sm">
+          <div class="flex gap-3 pt-2">
+            <button type="button" @click="modalType = 'detail'" class="w-1/3 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2.5 rounded-lg text-sm font-semibold transition">← पीछे जाएं</button>
+            <button type="submit" class="w-2/3 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg text-sm font-semibold transition">व्हाट्सएप खोलें 🚀</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Footer -->
+  <footer>
+    <p>जिला प्रशासन, मन्दसौर (म.प्र.) | जैविक खेती संवर्धन पोर्टल</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Main Background Carousel Auto Slide
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.carousel-slide');
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        if (i === index) slide.classList.add('active');
+      });
+    }
+
+    function changeSlide(direction) {
+      currentSlide = (currentSlide + direction + slides.length) % slides.length;
+      showSlide(currentSlide);
+    }
+
+    setInterval(() => changeSlide(1), 5000);
+
+    // Alpine.js Application Logic
+    function organicApp() {
+      return {
+        selectedTehsil: '',
+        showModal: false,
+        modalType: 'detail',
+        activeGalleryIndex: 0,
+        activeFarmer: { gallery: [] },
+        buyer: { name: '', mobile: '', need: '', amount: '' },
+        farmers: typeof farmersData !== 'undefined' ? farmersData : [],
+        
+        get uniqueTehsils() { 
+          return [...new Set(this.farmers.map(f => f.tehsil))]; 
+        },
+        
+        get filteredFarmers() { 
+          return this.selectedTehsil ? this.farmers.filter(f => f.tehsil === this.selectedTehsil) : this.farmers; 
+        },
+        
+        openDetailModal(farmer) { 
+          this.activeFarmer = farmer; 
+          this.activeGalleryIndex = 0; // Reset to first photo
+          this.modalType = 'detail'; 
+          this.showModal = true; 
+        },
+        
+        openBuyModal(farmer) { 
+          this.activeFarmer = farmer; 
+          this.modalType = 'buy'; 
+          this.showModal = true; 
+        },
+        
+        closeModal() { 
+          this.showModal = false; 
+          this.buyer = { name: '', mobile: '', need: '', amount: '' }; 
+        },
+
+        nextPhoto() {
+          if (this.activeFarmer.gallery && this.activeFarmer.gallery.length > 0) {
+            this.activeGalleryIndex = (this.activeGalleryIndex + 1) % this.activeFarmer.gallery.length;
+          }
+        },
+
+        prevPhoto() {
+          if (this.activeFarmer.gallery && this.activeFarmer.gallery.length > 0) {
+            this.activeGalleryIndex = (this.activeGalleryIndex - 1 + this.activeFarmer.gallery.length) % this.activeFarmer.gallery.length;
+          }
+        },
+        
+        submitOrder() {
+          let msg = `नमस्ते ${this.activeFarmer.name},%0A%0A*खरीददार का नाम:* ${this.buyer.name}%0A*मोबाइल:* ${this.buyer.mobile}%0A*आवश्यकता:* ${this.buyer.need}%0A*राशि:* ₹${this.buyer.amount}`;
+          window.open(`https://wa.me/91${this.activeFarmer.mobile}?text=${msg}`, '_blank');
+          this.closeModal();
+        },
+
+        handleContact(e) {
+          alert("धन्यवाद! आपका संदेश दर्ज कर लिया गया है।");
+          e.target.reset();
         }
-    </script>
+      }
+    }
+  </script>
 </body>
 </html>
