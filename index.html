@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organic Farmer Directory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Yahan farmers.js file ko link kiya gaya hai -->
+    <script src="farmers.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800" x-data="organicApp()">
+
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-green-700">🌱 Organic Farmer Connect</h1>
+                <p class="text-sm text-gray-600">Directly connect with local organic farmers for healthy, chemical-free produce.</p>
+            </div>
+            <div class="flex items-center gap-2 w-full md:w-auto">
+                <label for="tehsilFilter" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter Tehsil:</label>
+                <select id="tehsilFilter" x-model="selectedTehsil" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white">
+                    <option value="">All Tehsils</option>
+                    <template x-for="tehsil in uniqueTehsils" :key="tehsil">
+                        <option :value="tehsil" x-text="tehsil"></option>
+                    </template>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 my-8">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Available Farmers (<span x-text="filteredFarmers.length"></span>)</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <template x-for="farmer in filteredFarmers" :key="farmer.sr_no">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col justify-between">
+                    <div>
+                        <div class="h-48 overflow-hidden relative bg-gray-200">
+                            <img :src="farmer.farm_image" alt="Farm photo" class="w-full h-full object-cover">
+                            <span class="absolute top-3 right-3 bg-green-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow" x-text="farmer.tehsil"></span>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-lg font-bold text-gray-900 mb-1" x-text="farmer.name"></h3>
+                            <p class="text-xs text-gray-500 mb-3">📍 Village: <span x-text="farmer.village"></span> | District: <span x-text="farmer.district"></span></p>
+                            <div class="bg-green-50 p-2.5 rounded-lg border border-green-100 text-sm mb-3">
+                                <p class="text-xs font-semibold text-green-800 uppercase">Current Produce:</p>
+                                <p class="text-gray-700 font-medium" x-text="farmer.current_produce"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0 flex gap-2">
+                        <button @click="openDetailModal(farmer)" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg text-sm transition">View Details</button>
+                        <button @click="openBuyModal(farmer)" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg text-sm transition text-center">Buy / Visit</button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" style="display: none;">
+        <div @click.away="closeModal()" class="bg-white rounded-2xl max-w-lg w-full p-6 relative">
+            <button @click="closeModal()" class="absolute top-4 right-4 text-gray-400 font-bold">✕</button>
+            <div x-show="modalType === 'detail'">
+                <h3 class="text-xl font-bold mb-4" x-text="activeFarmer.name"></h3>
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                    <img :src="activeFarmer.farm_image" alt="Farm Photo" class="rounded-lg object-cover h-32 w-full">
+                    <img :src="activeFarmer.produce_image" alt="Produce Photo" class="rounded-lg object-cover h-32 w-full">
+                </div>
+                <p class="text-sm mb-2"><strong>Village:</strong> <span x-text="activeFarmer.village"></span></p>
+                <p class="text-sm mb-2"><strong>Current Produce:</strong> <span x-text="activeFarmer.current_produce"></span></p>
+                <p class="text-sm mb-4"><strong>Upcoming Produce:</strong> <span x-text="activeFarmer.upcoming_produce"></span></p>
+                <button @click="modalType = 'buy'" class="w-full bg-green-600 text-white py-2 rounded-lg text-sm">Proceed to Buy / Inquire</button>
+            </div>
+            <div x-show="modalType === 'buy'">
+                <h3 class="text-xl font-bold mb-2">Connect with <span x-text="activeFarmer.name"></span></h3>
+                <form @submit.prevent="submitOrder" class="space-y-3">
+                    <input type="text" x-model="buyer.name" placeholder="Your Name" required class="w-full border p-2 rounded text-sm">
+                    <input type="tel" x-model="buyer.mobile" placeholder="Mobile Number" required class="w-full border p-2 rounded text-sm">
+                    <textarea x-model="buyer.need" placeholder="Organic Need" required class="w-full border p-2 rounded text-sm"></textarea>
+                    <input type="text" x-model="buyer.amount" placeholder="Amount (₹)" required class="w-full border p-2 rounded text-sm">
+                    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded text-sm">Open WhatsApp 🚀</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function organicApp() {
+            return {
+                selectedTehsil: '',
+                showModal: false,
+                modalType: 'detail',
+                activeFarmer: {},
+                buyer: { name: '', mobile: '', need: '', amount: '' },
+                // Yahan farmers.js wali file ka data seedhe utha liya jayega
+                farmers: typeof farmersData !== 'undefined' ? farmersData : [],
+                get uniqueTehsils() { return [...new Set(this.farmers.map(f => f.tehsil))]; },
+                get filteredFarmers() { return this.selectedTehsil ? this.farmers.filter(f => f.tehsil === this.selectedTehsil) : this.farmers; },
+                openDetailModal(farmer) { this.activeFarmer = farmer; this.modalType = 'detail'; this.showModal = true; },
+                openBuyModal(farmer) { this.activeFarmer = farmer; this.modalType = 'buy'; this.showModal = true; },
+                closeModal() { this.showModal = false; this.buyer = { name: '', mobile: '', need: '', amount: '' }; },
+                submitOrder() {
+                    let msg = `Hello ${this.activeFarmer.name},%0A%0A*Buyer Name:* ${this.buyer.name}%0A*Mobile:* ${this.buyer.mobile}%0A*Requirement:* ${this.buyer.need}%0A*Amount:* ₹${this.buyer.amount}`;
+                    window.open(`https://wa.me/91${this.activeFarmer.mobile}?text=${msg}`, '_blank');
+                    this.closeModal();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
